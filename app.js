@@ -16,6 +16,11 @@ class IconCustomizer {
                 rotationY: 0,
                 rotationZ: 0
             },
+            appIcon: {
+                image: null,
+                position: 'top-left',
+                size: 64
+            },
             gradient: {
                 enabled: false,
                 startColor: '#000000',
@@ -113,6 +118,49 @@ class IconCustomizer {
 
 
 
+
+        // App Icon controls
+        const iconUploadArea = document.getElementById('iconUploadArea');
+        const iconInput = document.getElementById('iconInput');
+        const clearIconBtn = document.getElementById('clearIcon');
+
+        iconUploadArea.addEventListener('click', () => iconInput.click());
+        iconUploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            iconUploadArea.classList.add('dragover');
+        });
+        iconUploadArea.addEventListener('dragleave', () => {
+            iconUploadArea.classList.remove('dragover');
+        });
+        iconUploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            iconUploadArea.classList.remove('dragover');
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                this.handleIconUpload(files[0]);
+            }
+        });
+
+        iconInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                this.handleIconUpload(e.target.files[0]);
+            }
+        });
+
+        clearIconBtn.addEventListener('click', () => {
+            this.clearIcon();
+        });
+
+        document.getElementById('iconPosition').addEventListener('change', (e) => {
+            this.config.appIcon.position = e.target.value;
+            this.renderPreview();
+        });
+
+        document.getElementById('iconSize').addEventListener('input', (e) => {
+            this.config.appIcon.size = parseInt(e.target.value);
+            document.getElementById('iconSizeValue').textContent = e.target.value + 'px';
+            this.renderPreview();
+        });
 
         // Gradient controls
         document.getElementById('gradientEnabled').addEventListener('change', (e) => {
@@ -283,6 +331,37 @@ class IconCustomizer {
         document.querySelector('.preview-help').textContent = 'Drag controls to customize your icon';
     }
 
+    handleIconUpload(file) {
+        if (!file.type.match('image.*')) {
+            alert('Please select an image file.');
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                this.config.appIcon.image = img;
+                this.updateIconInfo(file.name);
+                this.renderPreview();
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    updateIconInfo(fileName) {
+        document.getElementById('iconName').textContent = fileName;
+        document.getElementById('iconInfo').style.display = 'block';
+    }
+
+    clearIcon() {
+        this.config.appIcon.image = null;
+        document.getElementById('iconInfo').style.display = 'none';
+        document.getElementById('iconInput').value = '';
+        this.renderPreview();
+    }
+
     clearImage() {
         this.currentImage = null;
         document.getElementById('fileInfo').style.display = 'none';
@@ -310,6 +389,11 @@ class IconCustomizer {
         // Draw screenshot if available
         if (this.currentImage) {
             this.drawScreenshot();
+        }
+
+        // Draw app icon watermark if available
+        if (this.config.appIcon.image) {
+            this.drawAppIcon();
         }
 
         // Draw gradient overlay (between screenshot and text)
@@ -405,6 +489,51 @@ class IconCustomizer {
             const y = centerY - scaledHeight / 2;
             this.ctx.drawImage(this.currentImage, x, y, scaledWidth, scaledHeight);
         }
+
+        this.ctx.restore();
+    }
+
+    drawAppIcon() {
+        if (!this.config.appIcon.image) return;
+
+        const { image, position, size } = this.config.appIcon;
+        const width = this.canvas.width;
+        const height = this.canvas.height;
+        const padding = 20;
+
+        this.ctx.save();
+
+        // Calculate position based on selection
+        let x, y;
+
+        switch (position) {
+            case 'top-left':
+                x = padding;
+                y = padding;
+                break;
+            case 'top-right':
+                x = width - size - padding;
+                y = padding;
+                break;
+            case 'bottom-left':
+                x = padding;
+                y = height - size - padding;
+                break;
+            case 'bottom-right':
+                x = width - size - padding;
+                y = height - size - padding;
+                break;
+            case 'center':
+                x = (width - size) / 2;
+                y = (height - size) / 2;
+                break;
+            default:
+                x = padding;
+                y = padding;
+        }
+
+        // Draw the app icon at full opacity (no transparency)
+        this.ctx.drawImage(image, x, y, size, size);
 
         this.ctx.restore();
     }
@@ -516,7 +645,7 @@ class IconCustomizer {
 
         this.ctx.save();
         
-        // Set text properties
+        // Set base text properties
         this.ctx.fillStyle = color;
         this.ctx.font = `bold ${size}px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`;
         
@@ -583,26 +712,137 @@ class IconCustomizer {
         this.ctx.shadowOffsetX = 2;
         this.ctx.shadowOffsetY = 2;
 
-        // Handle multi-line text
-        const lines = content.split('\n');
-        const lineHeight = size * 1.2; // Line height multiplier
-        
-        // Calculate starting Y position for multi-line text
-        let startY = y;
-        if (textBaseline === 'middle') {
-            startY = y - ((lines.length - 1) * lineHeight) / 2;
-        } else if (textBaseline === 'bottom') {
-            startY = y - ((lines.length - 1) * lineHeight);
-        }
-
-        // Draw each line of text
-        lines.forEach((line, index) => {
-            if (line.trim()) {
-                this.ctx.fillText(line, x, startY + (index * lineHeight));
-            }
-        });
+        // Parse and render rich text with HTML tags
+        this.drawRichText(content, x, y, textAlign, textBaseline, size, color);
 
         this.ctx.restore();
+    }
+
+    drawRichText(htmlContent, x, y, textAlign, textBaseline, baseSize, baseColor) {
+        // Parse HTML content and extract text segments with styles
+        const segments = this.parseHTML(htmlContent, baseSize, baseColor);
+        
+        // Calculate total width for centering
+        let totalWidth = 0;
+        segments.forEach(segment => {
+            this.ctx.font = segment.font;
+            totalWidth += this.ctx.measureText(segment.text).width;
+        });
+
+        // Calculate starting position based on alignment
+        let currentX = x;
+        if (textAlign === 'center') {
+            currentX = x - totalWidth / 2;
+        } else if (textAlign === 'right') {
+            currentX = x - totalWidth;
+        }
+
+        // Draw each text segment
+        segments.forEach(segment => {
+            this.ctx.font = segment.font;
+            this.ctx.fillStyle = segment.color;
+            
+            this.ctx.fillText(segment.text, currentX, y);
+            
+            // Move to next position
+            currentX += this.ctx.measureText(segment.text).width;
+        });
+    }
+
+    parseHTML(htmlContent, baseSize, baseColor) {
+        const segments = [];
+        let currentText = '';
+        let currentStyles = {
+            bold: false,
+            italic: false,
+            color: baseColor,
+            fontSize: baseSize
+        };
+
+        // Simple HTML parser for basic tags
+        const tagRegex = /(<(\/?)(b|i|span)(?:\s+[^>]*)?>)|([^<]+)/g;
+        let match;
+
+        while ((match = tagRegex.exec(htmlContent)) !== null) {
+            if (match[4]) {
+                // Text content
+                currentText += match[4];
+            } else if (match[1]) {
+                // HTML tag
+                const isClosing = match[2] === '/';
+                const tagName = match[3];
+
+                // If we have accumulated text, add it as a segment
+                if (currentText) {
+                    segments.push({
+                        text: currentText,
+                        font: this.buildFontString(currentStyles),
+                        color: currentStyles.color
+                    });
+                    currentText = '';
+                }
+
+                // Handle opening tags
+                if (!isClosing) {
+                    if (tagName === 'b') {
+                        currentStyles.bold = true;
+                    } else if (tagName === 'i') {
+                        currentStyles.italic = true;
+                    } else if (tagName === 'span') {
+                        // Parse span attributes
+                        const styleMatch = match[1].match(/style="([^"]*)"/);
+                        if (styleMatch) {
+                            const style = styleMatch[1];
+                            
+                            // Parse color
+                            const colorMatch = style.match(/color:\s*([^;]+)/);
+                            if (colorMatch) {
+                                currentStyles.color = colorMatch[1].trim();
+                            }
+                            
+                            // Parse font size
+                            const sizeMatch = style.match(/font-size:\s*(\d+)px/);
+                            if (sizeMatch) {
+                                currentStyles.fontSize = parseInt(sizeMatch[1]);
+                            }
+                        }
+                    }
+                } else {
+                    // Handle closing tags
+                    if (tagName === 'b') {
+                        currentStyles.bold = false;
+                    } else if (tagName === 'i') {
+                        currentStyles.italic = false;
+                    } else if (tagName === 'span') {
+                        // Reset span styles to base
+                        currentStyles.color = baseColor;
+                        currentStyles.fontSize = baseSize;
+                    }
+                }
+            }
+        }
+
+        // Add any remaining text
+        if (currentText) {
+            segments.push({
+                text: currentText,
+                font: this.buildFontString(currentStyles),
+                color: currentStyles.color
+            });
+        }
+
+        return segments;
+    }
+
+    buildFontString(styles) {
+        let font = '';
+        
+        if (styles.bold) font += 'bold ';
+        if (styles.italic) font += 'italic ';
+        
+        font += `${styles.fontSize}px 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif`;
+        
+        return font;
     }
 
     exportPNG() {
