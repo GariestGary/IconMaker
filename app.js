@@ -584,15 +584,15 @@ class IconCustomizer {
             this.drawScreenshot();
         }
 
-        // Draw app icon watermark if available
+        // Draw gradient overlay (before watermark and text)
+        this.drawGradientOverlay();
+
+        // Draw app icon watermark if available (over gradient)
         if (this.config.appIcon.image) {
             this.drawAppIcon();
         }
 
-        // Draw gradient overlay (between screenshot and text)
-        this.drawGradientOverlay();
-
-        // Draw text
+        // Draw text (over everything)
         this.drawText();
     }
 
@@ -1121,15 +1121,15 @@ class IconCustomizer {
             this.drawScreenshotToCanvas(ctx, width, height);
         }
 
-        // Draw app icon watermark if available
+        // Draw gradient overlay (before watermark and text)
+        this.drawGradientOverlayToCanvas(ctx, width, height);
+
+        // Draw app icon watermark if available (over gradient)
         if (this.config.appIcon.image) {
             this.drawAppIconToCanvas(ctx, width, height);
         }
 
-        // Draw gradient overlay
-        this.drawGradientOverlayToCanvas(ctx, width, height);
-
-        // Draw text
+        // Draw text (over everything)
         this.drawTextToCanvas(ctx, width, height);
     }
 
