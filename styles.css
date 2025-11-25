@@ -1,0 +1,362 @@
+/* Reset and base styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html, body {
+    height: 100%;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: #333;
+    line-height: 1.6;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    max-width: 100%;
+    height: 100vh;
+    padding: 0;
+}
+
+/* Header */
+.header {
+    text-align: center;
+    padding: 20px;
+    color: white;
+    flex-shrink: 0;
+}
+
+.header h1 {
+    font-size: 2rem;
+    margin-bottom: 8px;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+.header p {
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+/* Main content layout */
+.main-content {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 400px 1fr;
+    gap: 0;
+    height: calc(100vh - 120px);
+    overflow: hidden;
+    background: white;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+}
+
+/* Controls Panel */
+.controls-panel {
+    border-right: 1px solid #e1e5e9;
+    padding: 25px;
+    overflow-y: auto;
+    height: 100%;
+}
+
+.control-group {
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.control-group:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.control-group h3 {
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+    color: #2c3e50;
+    font-weight: 600;
+}
+
+.control-row {
+    display: flex;
+    align-items: center;
+    margin-bottom: 12px;
+    gap: 10px;
+}
+
+.control-row label {
+    min-width: 80px;
+    font-weight: 500;
+    color: #555;
+}
+
+.control-row input[type="range"] {
+    flex: 1;
+}
+
+.control-row input[type="color"] {
+    width: 40px;
+    height: 30px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.control-row input[type="text"],
+.control-row textarea,
+.control-row select {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 14px;
+    font-family: inherit;
+    resize: vertical;
+}
+
+.control-row textarea {
+    min-height: 60px;
+    line-height: 1.4;
+}
+
+.control-row span {
+    min-width: 40px;
+    text-align: right;
+    font-size: 14px;
+    color: #666;
+}
+
+.control-hint {
+    margin-top: 10px;
+    padding: 8px 12px;
+    background: #e3f2fd;
+    border-radius: 6px;
+    border-left: 4px solid #2196f3;
+}
+
+.control-hint p {
+    margin: 0;
+    font-size: 12px;
+    color: #1565c0;
+}
+
+/* File Upload */
+.file-upload-area {
+    border: 2px dashed #667eea;
+    border-radius: 8px;
+    padding: 40px 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #f8f9ff;
+}
+
+.file-upload-area:hover {
+    border-color: #5a67d8;
+    background: #f0f4ff;
+}
+
+.file-upload-area.dragover {
+    border-color: #5a67d8;
+    background: #e6f0ff;
+    transform: scale(1.02);
+}
+
+.upload-content svg {
+    color: #667eea;
+    margin-bottom: 10px;
+}
+
+.upload-content p {
+    margin-bottom: 5px;
+    color: #555;
+}
+
+.upload-subtext {
+    font-size: 0.9rem;
+    color: #888;
+}
+
+.file-info {
+    margin-top: 15px;
+    padding: 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border-left: 4px solid #28a745;
+}
+
+.file-info p {
+    margin-bottom: 8px;
+    font-size: 14px;
+}
+
+/* Buttons */
+.btn-primary {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+}
+
+.btn-primary:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.btn-primary:disabled {
+    background: #ccc;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.btn-secondary:hover {
+    background: #5a6268;
+}
+
+/* Preview Panel */
+.preview-panel {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    height: 100%;
+    overflow: hidden;
+}
+
+.preview-container {
+    text-align: center;
+    max-width: 600px;
+    width: 100%;
+}
+
+.preview-container h3 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+    font-size: 1.3rem;
+}
+
+.canvas-wrapper {
+    display: inline-block;
+    border: 1px solid #e1e5e9;
+    border-radius: 8px;
+    padding: 10px;
+    background: #f8f9fa;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+
+#previewCanvas {
+    border-radius: 4px;
+    background: white;
+    display: block;
+}
+
+.preview-info {
+    color: #666;
+    font-size: 14px;
+}
+
+.preview-help {
+    font-style: italic;
+    color: #888;
+    margin-top: 10px;
+}
+
+.export-info {
+    margin-top: 15px;
+    padding: 15px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #28a745;
+}
+
+.export-info p {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #555;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .main-content {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+        height: auto;
+    }
+    
+    .controls-panel {
+        border-right: none;
+        border-bottom: 1px solid #e1e5e9;
+        padding-right: 0;
+        padding-bottom: 20px;
+        max-height: 400px;
+    }
+    
+    .header h1 {
+        font-size: 1.8rem;
+    }
+    
+    .header {
+        padding: 15px;
+    }
+}
+
+/* Range input styling */
+input[type="range"] {
+    -webkit-appearance: none;
+    height: 6px;
+    background: #e1e5e9;
+    border-radius: 3px;
+    outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #667eea;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+    background: #5a67d8;
+}
+
+input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #667eea;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
