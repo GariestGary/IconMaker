@@ -1,82 +1,123 @@
 # Icon Customizer
 
-A web-based tool for creating custom 512x512 pixel icons with program screenshots, designed specifically for third-party Windows start menu customization.
+A web-based tool for creating custom 512x512 pixel icons for Windows start menus with rich customization options.
 
 ## Features
 
-### ✅ Currently Implemented (Phase 1)
-- **File Upload**: Drag & drop or click to upload program screenshots
-- **Background Customization**: 
-  - Color picker with opacity control
-  - Corner radius adjustment (0-50px)
-- **Text Overlay**:
-  - Custom text content
-  - Position above/below screenshot
-  - Font size and color customization
-- **Real-time Preview**: Instant updates as you adjust settings
-- **PNG Export**: High-quality 512x512 pixel PNG download
+- **Background Customization**: Color, corner radius
+- **Screenshot Processing**: Zoom, 3D rotation, perspective transformation
+- **App Icon Watermark**: Upload app icon with position and size controls
+- **Rich Text Overlay**: HTML formatting support (bold, italic, colors, sizes)
+- **Gradient Overlay**: Customizable gradient with opacity and rotation
+- **Real-time Preview**: Live preview with drag positioning
+- **Export**: Download as 512x512 PNG
 
-### 🚧 Planned Features
-- Screenshot tint and opacity controls
-- Gradient overlays and effects
-- Background texture patterns
-- Preset save/load system
-- Advanced text effects (shadows, backgrounds)
+## GitHub Pages Deployment
 
-## Quick Start
+### Prerequisites
+- GitHub account
+- Git installed on your computer
 
-1. **Open the Tool**: Double-click `index.html` or run `start index.html` in the terminal
-2. **Upload Screenshot**: 
-   - Drag & drop a program screenshot onto the upload area, or
-   - Click the upload area to browse for a file
-3. **Customize Your Icon**:
-   - Adjust background color and opacity
-   - Set corner radius for rounded corners
-   - Edit text content, position, size, and color
-4. **Export**: Click "Export PNG (512x512)" to download your custom icon
+### Step-by-Step Deployment
+
+1. **Create GitHub Repository**
+   ```bash
+   # Create a new repository on GitHub named "icon-customizer"
+   # Make sure it's public (required for free GitHub Pages)
+   ```
+
+2. **Initialize Git and Push Code**
+   ```bash
+   # Navigate to your project directory
+   cd IconMaker
+   
+   # Initialize git repository
+   git init
+   git add .
+   git commit -m "Initial commit: Icon Customizer app"
+   
+   # Add your GitHub repository as remote
+   git remote add origin https://github.com/YOUR_USERNAME/icon-customizer.git
+   git branch -M main
+   git push -u origin main
+   ```
+
+3. **Enable GitHub Pages**
+   - Go to your repository on GitHub
+   - Click **Settings** tab
+   - Scroll down to **Pages** section
+   - Under **Source**, select **Deploy from a branch**
+   - Select **main** branch and **/(root)** folder
+   - Click **Save**
+
+4. **Access Your Live Site**
+   - Your site will be available at: `https://YOUR_USERNAME.github.io/icon-customizer/`
+   - It may take a few minutes for the first deployment
+
+### Custom Domain (Optional)
+If you want to use a custom domain:
+1. Buy a domain from a domain registrar
+2. In GitHub Pages settings, add your custom domain
+3. Configure DNS records with your domain provider
+
+## Local Development
+
+To run locally:
+1. Clone the repository
+2. Open `index.html` in a web browser
+3. No server required - works as a static site
+
+## Browser Compatibility
+
+- Chrome/Chromium 80+
+- Firefox 75+
+- Safari 13+
+- Edge 80+
 
 ## File Structure
 
 ```
-IconMaker/
-├── index.html          # Main application interface
-├── styles.css          # Styling and responsive layout
-├── app.js              # Core application logic
-├── technical-spec.md   # Technical specifications
-├── workflow-diagram.md # Process flow diagrams
-├── implementation-roadmap.md # Development timeline
-└── project-summary.md  # Project overview
+icon-customizer/
+├── index.html          # Main HTML file
+├── styles.css          # CSS styles
+├── app.js             # Main application logic
+├── README.md          # This file
+└── .nojekyll          # Prevents Jekyll processing
 ```
 
-## Technical Details
+## Usage Examples
 
-- **Technology**: Pure HTML5, CSS3, and JavaScript
-- **Image Processing**: HTML Canvas API
-- **No Dependencies**: Runs entirely in browser, no server required
-- **Export Format**: 512x512 PNG with transparency support
+### Text Formatting
+- `App <b>Name</b>` - Bold text
+- `<i>Italic</i> Text` - Italic text
+- `<span style="color:red">Red</span> Text` - Colored text
+- `<span style="font-size:32px">Big</span> Text` - Different sizes
 
-## Browser Compatibility
+### App Icon Watermark
+- Upload any image as app icon
+- Choose from 5 positions
+- Adjust size from 32px to 256px
 
-- Chrome 60+
-- Firefox 55+
-- Safari 11+
-- Edge 79+
-
-## Usage Tips
-
-- Use high-quality screenshots for best results
-- Dark backgrounds with light text often work well
-- Experiment with corner radius for different visual styles
-- The preview updates in real-time as you adjust controls
-
-## Next Development Phase
-
-The current implementation covers the core MVP functionality. Future phases will add:
-- Advanced effects and gradients
-- Screenshot tinting and positioning
-- Preset management system
-- Performance optimizations
+### 3D Effects
+- Rotate screenshot in X, Y, Z axes
+- Perspective transformation
+- Real-time preview
 
 ## License
 
-This project is open source and available under the MIT License.
+MIT License - feel free to use and modify for your projects.
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Submit a pull request
+
+## Support
+
+If you encounter issues:
+1. Check browser compatibility
+2. Ensure JavaScript is enabled
+3. Try refreshing the page
+4. Open an issue on GitHub

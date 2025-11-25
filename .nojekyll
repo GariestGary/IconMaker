@@ -1,0 +1,3 @@
+# This file prevents GitHub Pages from using Jekyll processing
+# Jekyll can interfere with static sites that use underscore-prefixed files
+# or other non-standard directory structures
