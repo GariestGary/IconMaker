@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Icon Customizer</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fontfaceobserver/2.1.0/fontfaceobserver.js"></script>
 </head>
 <body>
     <div class="container">
@@ -35,6 +36,13 @@
                     <div class="file-info" id="fileInfo" style="display: none;">
                         <p>Loaded: <span id="fileName"></span></p>
                         <button id="clearFile" class="btn-secondary">Clear</button>
+                    </div>
+                    <div class="control-row">
+                        <label for="screenshotUrl">Or load from URL:</label>
+                        <div class="url-input-group">
+                            <input type="url" id="screenshotUrl" placeholder="https://example.com/image.png">
+                            <button id="loadScreenshotUrl" class="btn-secondary">Load</button>
+                        </div>
                     </div>
                 </div>
 
@@ -73,9 +81,6 @@
                         <input type="range" id="rotationZ" min="-180" max="180" value="0">
                         <span id="rotationZValue">0°</span>
                     </div>
-                    <div class="control-hint">
-                        <p>💡 Drag the preview to position the screenshot</p>
-                    </div>
                 </div>
 
                 <div class="control-group">
@@ -97,6 +102,13 @@
                         <button id="clearIcon" class="btn-secondary">Clear</button>
                     </div>
                     <div class="control-row">
+                        <label for="iconUrl">Or load from URL:</label>
+                        <div class="url-input-group">
+                            <input type="url" id="iconUrl" placeholder="https://example.com/icon.png">
+                            <button id="loadIconUrl" class="btn-secondary">Load</button>
+                        </div>
+                    </div>
+                    <div class="control-row">
                         <label for="iconPosition">Position:</label>
                         <select id="iconPosition">
                             <option value="top-left">Top Left</option>
@@ -111,8 +123,15 @@
                         <input type="range" id="iconSize" min="32" max="256" value="64">
                         <span id="iconSizeValue">64px</span>
                     </div>
-                    <div class="control-hint">
-                        <p>💡 App icon will be displayed as watermark</p>
+                    <div class="control-row">
+                        <label for="iconRepaintEnabled">
+                            <input type="checkbox" id="iconRepaintEnabled">
+                            Repaint Icon
+                        </label>
+                    </div>
+                    <div class="control-row">
+                        <label for="iconRepaintColor">Repaint Color:</label>
+                        <input type="color" id="iconRepaintColor" value="#ffffff">
                     </div>
                 </div>
 
@@ -157,9 +176,6 @@
                         <input type="range" id="gradientRotation" min="0" max="360" step="1" value="0">
                         <span id="gradientRotationValue">0°</span>
                     </div>
-                    <div class="control-hint">
-                        <p>💡 Use to improve text contrast</p>
-                    </div>
                 </div>
 
                 <div class="control-group">
@@ -167,6 +183,14 @@
                     <div class="control-row">
                         <label for="textContent">Text (HTML supported):</label>
                         <textarea id="textContent" placeholder="App Name" rows="3">App Name</textarea>
+                    </div>
+                    <div class="control-row">
+                        <label for="textFont">Google Font:</label>
+                        <input type="text" id="textFont" placeholder="e.g., Roboto, Open Sans" value="Segoe UI">
+                    </div>
+                    <div id="fontLoading" class="font-loading" style="display: none;">
+                        <span class="loading-spinner"></span>
+                        <span>Loading font...</span>
                     </div>
                     <div class="control-row">
                         <label for="textPosition">Position:</label>
@@ -189,19 +213,27 @@
                         <input type="range" id="textSize" min="12" max="96" value="24">
                         <span id="textSizeValue">24px</span>
                     </div>
-                    <div class="control-hint">
-                        <p>💡 Use HTML tags for rich formatting:</p>
-                        <p><code><b>Bold</b></code> <code><i>Italic</i></code></p>
-                        <p><code><span style="color:red">Red text</span></code></p>
-                        <p><code><span style="font-size:32px">Big text</span></code></p>
+                </div>
+
+                <div class="control-group">
+                    <h3>Icon Size</h3>
+                    <div class="control-row">
+                        <label for="iconWidth">Width:</label>
+                        <input type="number" id="iconWidth" min="64" max="2048" value="512">
+                        <span>px</span>
+                    </div>
+                    <div class="control-row">
+                        <label for="iconHeight">Height:</label>
+                        <input type="number" id="iconHeight" min="64" max="2048" value="512">
+                        <span>px</span>
                     </div>
                 </div>
 
                 <div class="control-group">
                     <h3>Export</h3>
-                    <button id="exportBtn" class="btn-primary" disabled>Export PNG (512x512)</button>
+                    <button id="exportBtn" class="btn-primary" disabled>Export PNG</button>
                     <div class="export-info">
-                        <p>Output: 512x512 pixels</p>
+                        <p id="exportSizeInfo">Output: 512x512 pixels</p>
                         <p>Format: PNG with transparency</p>
                     </div>
                 </div>
