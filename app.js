@@ -950,8 +950,8 @@ class IconCustomizer {
         this.ctx.shadowOffsetX = 2;
         this.ctx.shadowOffsetY = 2;
 
-        // Parse and render rich text with HTML tags
-        this.drawRichText(content, x, y, textAlign, textBaseline, size, color);
+        // Parse and render multi-line rich text with HTML tags
+        this.drawMultiLineRichText(content, x, y, textAlign, textBaseline, size, color);
 
         this.ctx.restore();
     }
@@ -1439,10 +1439,141 @@ class IconCustomizer {
         ctx.shadowOffsetX = 2 * scaleFactor;
         ctx.shadowOffsetY = 2 * scaleFactor;
 
-        // Parse and render rich text with HTML tags
-        this.drawRichTextToCanvas(ctx, content, x, y, textAlign, textBaseline, scaledSize, color);
+        // Parse and render multi-line rich text with HTML tags
+        this.drawMultiLineRichTextToCanvas(ctx, content, x, y, textAlign, textBaseline, scaledSize, color);
 
         ctx.restore();
+    }
+
+    drawMultiLineRichTextToCanvas(ctx, htmlContent, x, y, textAlign, textBaseline, baseSize, baseColor) {
+        // Parse HTML content and split into lines
+        const lines = this.parseMultiLineHTML(htmlContent, baseSize, baseColor);
+        
+        // Calculate total height for vertical centering
+        const lineHeight = baseSize * 1.2; // 20% line spacing
+        const totalHeight = lines.length * lineHeight;
+        
+        // Adjust starting Y position based on textBaseline and total height
+        let startY = y;
+        if (textBaseline === 'middle') {
+            startY = y - totalHeight / 2 + lineHeight / 2;
+        } else if (textBaseline === 'bottom') {
+            startY = y - totalHeight + lineHeight;
+        } else if (textBaseline === 'top') {
+            startY = y + lineHeight / 2;
+        }
+
+        // Draw each line
+        lines.forEach((lineSegments, lineIndex) => {
+            const lineY = startY + (lineIndex * lineHeight);
+            
+            // Calculate total width for horizontal alignment
+            let totalWidth = 0;
+            lineSegments.forEach(segment => {
+                ctx.font = segment.font;
+                totalWidth += ctx.measureText(segment.text).width;
+            });
+
+            // Calculate starting X position based on alignment
+            let currentX = x;
+            if (textAlign === 'center') {
+                currentX = x - totalWidth / 2;
+            } else if (textAlign === 'right') {
+                currentX = x - totalWidth;
+            }
+
+            // Draw each text segment in the line
+            lineSegments.forEach(segment => {
+                ctx.font = segment.font;
+                ctx.fillStyle = segment.color;
+                
+                ctx.fillText(segment.text, currentX, lineY);
+                
+                // Move to next position
+                currentX += ctx.measureText(segment.text).width;
+            });
+        });
+    }
+
+    drawMultiLineRichText(htmlContent, x, y, textAlign, textBaseline, baseSize, baseColor) {
+        // Parse HTML content and split into lines
+        const lines = this.parseMultiLineHTML(htmlContent, baseSize, baseColor);
+        
+        // Calculate total height for vertical centering
+        const lineHeight = baseSize * 1.2; // 20% line spacing
+        const totalHeight = lines.length * lineHeight;
+        
+        // Adjust starting Y position based on textBaseline and total height
+        let startY = y;
+        if (textBaseline === 'middle') {
+            startY = y - totalHeight / 2 + lineHeight / 2;
+        } else if (textBaseline === 'bottom') {
+            startY = y - totalHeight + lineHeight;
+        } else if (textBaseline === 'top') {
+            startY = y + lineHeight / 2;
+        }
+
+        // Draw each line
+        lines.forEach((lineSegments, lineIndex) => {
+            const lineY = startY + (lineIndex * lineHeight);
+            
+            // Calculate total width for horizontal alignment
+            let totalWidth = 0;
+            lineSegments.forEach(segment => {
+                this.ctx.font = segment.font;
+                totalWidth += this.ctx.measureText(segment.text).width;
+            });
+
+            // Calculate starting X position based on alignment
+            let currentX = x;
+            if (textAlign === 'center') {
+                currentX = x - totalWidth / 2;
+            } else if (textAlign === 'right') {
+                currentX = x - totalWidth;
+            }
+
+            // Draw each text segment in the line
+            lineSegments.forEach(segment => {
+                this.ctx.font = segment.font;
+                this.ctx.fillStyle = segment.color;
+                
+                this.ctx.fillText(segment.text, currentX, lineY);
+                
+                // Move to next position
+                currentX += this.ctx.measureText(segment.text).width;
+            });
+        });
+    }
+
+    parseMultiLineHTML(htmlContent, baseSize, baseColor) {
+        const lines = [];
+        let currentLine = [];
+        let currentText = '';
+        let currentStyles = {
+            bold: false,
+            italic: false,
+            color: baseColor,
+            fontSize: baseSize
+        };
+
+        // Split content by line breaks and <br> tags
+        const lineParts = htmlContent.split(/(?:\r\n|\n|\r|<br\s*\/?>)/gi);
+        
+        lineParts.forEach((part, index) => {
+            // Parse HTML tags within each line
+            const segments = this.parseHTML(part, baseSize, baseColor);
+            
+            if (segments.length > 0) {
+                lines.push(segments);
+            }
+            
+            // Add empty line for consecutive line breaks (except the last one)
+            if (index < lineParts.length - 1 && part === '' && lineParts[index + 1] === '') {
+                lines.push([]);
+            }
+        });
+
+        return lines;
     }
 
     drawRichTextToCanvas(ctx, htmlContent, x, y, textAlign, textBaseline, baseSize, baseColor) {
